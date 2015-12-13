@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Flash Cards</title>
+        <link rel="stylesheet" type="text/css" href="css/reset.css" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <script src="js/lib/angular.js"></script>
+        <script src="js/app.js"></script>
+        <script src="js/controllers/NewCardController.js"></script>
+        <script src="js/controllers/MainController.js"></script>
+        <script src="js/controllers/StatsController.js"></script>
+        <script src="js/factories/FlashCardFactory.js"></script>
+        <script src="js/factories/ScoreFactory.js"></script>
+        <script src="js/directives/loader/loader.js"></script>
+        <script src="js/directives/flashcard/flashcardDirective.js"></script>
+        <script src="js/directives/border-hover/borderHoverDirective.js"></script>
+    </head>
+
+    <body>
+
+        <div ng-app="FlashCards" ng-controller="MainController">
+
+            <div ng-controller="StatsController" id="statistics">
+                
+                <div id="scoreboard">
+                    <h3>Correct: <span>{{ scores.correct }}</span></h3>
+                    <h3>Incorrect: <span>{{ scores.incorrect }}</span></h3>
+                </div>
+
+            </div>
+
+            <div ng-controller="NewCardController">
+                <h3>Create a new card</h3>
+                <br>
+                <form name="newCardForm" ng-submit="sendNewCard(newCard, currentCategory)">
+                     <label>Question:</label>
+                    <input type="text" name="question" ng-model="newCard.question" ng-minlength="15" required>
+                    <label>Category:</label>
+                    <input type="text" name="category" ng-model="newCard.category" required>
+                    <br>
+                    <label>Answers:</label>
+                    <span ng-repeat="answer in newCard.answers">
+                        <input type="text" ng-model="answer.text" ng-maxlength="40">
+                        <select ng-model="answer.correct">
+                            <option value="true">true</option>
+                            <option value="false">false</option>
+                        </select>
+                    </span>
+                    <br>
+                    <br>
+                    <button ng-disabled="newCardForm.$invalid">Submit</button>
+                    <br>
+                    <br>
+                </form>
+            </div>
+
+            <div>
+
+                <button ng-click="getAllCards()" ng-class="{ active: currentCategory === null }" class="category-button">All</button>
+                <button ng-click="getCategoryCards(category)" ng-class="{ active: currentCategory === category }" ng-repeat="category in categories" class="category-button">{{ category }}</button>
+
+                <div>
+                    <loader ng-show="loading"></loader>
+                </div>
+                <div ng-hide="loading" ng-repeat="flashCard in flashCards | orderBy:'question'" class="flash-card" border-hover>
+                    <flash-card card="flashCard"></flash-card>
+                </div>
+            </div>
+            
+        </div>
+
+    </body>
+
+</html>
